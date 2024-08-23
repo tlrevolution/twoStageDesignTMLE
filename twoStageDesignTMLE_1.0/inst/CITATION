@@ -1,0 +1,12 @@
+citHeader("To cite twoStageTMLE in publications use:")
+
+bibentry(key = "twoStageDesignTMLEpkg",
+  title = "twoStageDesignTMLE: An R package for analyzing two-stage design study data with TMLE",
+  bibtype  = "Misc",
+  year = "2024",
+  author    = "Susan Gruber and Mark van der Laan",
+  url = "https://CRAN.R-project.org/package=twoStageDesignTMLE",
+  note = "Version 1.0" 
+)
+
+

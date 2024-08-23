@@ -1,0 +1,18 @@
+Package: twoStageDesignTMLE
+Title: An R Package for Analyzing Data from a Two-Stage Study Design with an Inverse Probability of Censoring Weighted TMLE
+Version: 1.0
+Authors@R: c(person("Susan", "Gruber", role = c("aut", "cre"), 
+				email = "sgruber@TLrevolution.com"),
+                    person("Mark", "van der Laan", role = "aut",
+                                email = "laan@TLrevolution.com"))
+Author: Susan Gruber [aut, cre],
+    	Mark van der Laan [aut]
+Maintainer: Susan Gruber <sgruber@TLrevolution.com>
+Copyright: Copyright 2024. TL Revolution LLC. All Rights Reserved. 
+Description: An inverse probability of censoring weighted (IPCW) TMLE for evaluating a point treatment effect  using a two-stage sampling design (or marginal mean outcome for a single arm study). MSM parameter estimation also available.
+Depends: tmle (>= 2.0)
+Suggests:  dbarts (>= 0.9-18), glmnet
+License: GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
