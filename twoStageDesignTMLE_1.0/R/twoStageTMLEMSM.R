@@ -87,7 +87,7 @@
 #'}
 #' 
 #' @seealso
-#' * [tmleMSM()] for details on customizing the estimation procedure
+#' * [tmle::tmleMSM()] for details on customizing the estimation procedure
 #' * [twoStageTMLE()] for estimating marginal effects
 #' @export
 twoStageTMLEmsm <- function(Y, A, W, V, Delta.W, W.stage2, 
