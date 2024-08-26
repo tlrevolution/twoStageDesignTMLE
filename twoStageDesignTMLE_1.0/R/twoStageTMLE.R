@@ -76,7 +76,7 @@
 #' * [twoStageTMLEmsm()] for estimating conditional effects
 #' * S Rose and MJ van der Laan. A Targeted Maximum Likelihood Estimator for 
 #' Two-Stage Designs. \emph{Int J Biostat.} 2011 Jan 1; 7(1): 17.
-#' \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3083136/}
+#'  \doi{doi:10.2202/1557-4679.1217}
 #' @export
 twoStageTMLE <- function(Y, A, W, Delta.W, W.stage2, Z=NULL, 
      Delta = rep(1, length(Y)), pi=NULL, piform=NULL,
