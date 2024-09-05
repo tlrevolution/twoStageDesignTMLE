@@ -111,7 +111,7 @@ result1 <- twoStageTMLE(Y=Y, A=A, W=cbind(W1, W2), Delta.W = Delta.W,
    W.stage2 = W3.stage2, piform = "Delta.W~ I(W1 > 0)", V.pi= 5,verbose = TRUE, 
    Qform = "Y~A+W1",gform="A~W1 + W2 +W3", augmentW = FALSE)
 summary(result1)
-\dontrun{
+\donttest{
 #2. specify a parametric model for conditional missingness probabilities (pi)
 #   and use default values to estimate marginal effect using \code{tmle}
 result2 <- twoStageTMLE(Y=Y, A=A, W=cbind(W1, W2), Delta.W = Delta.W, 
@@ -126,6 +126,6 @@ result2
 \item \code{\link[=twoStageTMLEmsm]{twoStageTMLEmsm()}} for estimating conditional effects
 \item S Rose and MJ van der Laan. A Targeted Maximum Likelihood Estimator for
 Two-Stage Designs. \emph{Int J Biostat.} 2011 Jan 1; 7(1): 17.
-\url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3083136/}
+\doi{doi:10.2202/1557-4679.1217}
 }
 }
