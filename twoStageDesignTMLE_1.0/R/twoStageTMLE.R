@@ -63,7 +63,7 @@
 #'    W.stage2 = W3.stage2, piform = "Delta.W~ I(W1 > 0)", V.pi= 5,verbose = TRUE, 
 #'    Qform = "Y~A+W1",gform="A~W1 + W2 +W3", augmentW = FALSE)
 #' summary(result1)
-#' \dontrun{
+#' \donttest{
 #' #2. specify a parametric model for conditional missingness probabilities (pi)
 #' #   and use default values to estimate marginal effect using \code{tmle}
 #' result2 <- twoStageTMLE(Y=Y, A=A, W=cbind(W1, W2), Delta.W = Delta.W, 
@@ -161,7 +161,7 @@ twoStageTMLE <- function(Y, A, W, Delta.W, W.stage2, Z=NULL,
   result <- list()	
   result$tmle <- try(do.call(tmle::tmle, argList))			 			
   if(inherits(result$tmle, "try-error")){
-    cat("Error calling tmle. Estimated sampling probabilites will be returned")
+    warning("Error calling tmle. Estimated sampling probabilites will be returned")
     result$tmle <- NULL
   }
   result$twoStage <- res.twoStage
