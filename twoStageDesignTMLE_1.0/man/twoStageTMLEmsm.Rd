@@ -125,7 +125,7 @@ pi = result1.MSM$twoStage$pi, MSM = "A*W1",
 Qform = "Y~ A + W1 + W2 + A*W1 + W3",gform="A~W1 + W2 +W3", hAVform = "A~1")
 cbind(SE.Qmis = result1.MSM$tmle$se, SE.Qcor = result2.MSM$tmle$se)
 
-\dontrun{
+\donttest{
 #Binary outcome, augmentW, rareOutcome
 result3.MSM <- twoStageTMLEmsm(Y=Y.bin, A=A, V= cbind(W1), W=cbind(W2), 
 Delta.W = Delta.W, W.stage2 = W3.stage2, augmentW = TRUE,
