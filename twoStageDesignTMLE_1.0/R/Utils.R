@@ -28,6 +28,7 @@ setV <- function(n.effective){
 #' Get news about recent updates and bug fixes
 #' @param ... ignored 
 #' @export
+#' @return invisible character string giving the path to the file found.
 twoStageDesignTMLENews <- function(...){
   utils::RShowDoc("NEWS", package="twoStageTMLE",...)
 }
