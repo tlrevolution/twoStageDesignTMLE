@@ -10,6 +10,9 @@ twoStageDesignTMLENews(...)
 \arguments{
 \item{...}{ignored}
 }
+\value{
+invisible character string giving the path to the file found.
+}
 \description{
 twoStageDesignTMLENews
 Get news about recent updates and bug fixes
