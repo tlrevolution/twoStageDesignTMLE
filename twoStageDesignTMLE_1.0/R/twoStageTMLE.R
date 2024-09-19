@@ -88,6 +88,13 @@ twoStageTMLE <- function(Y, A, W, Delta.W, W.stage2, Z=NULL,
      verbose=FALSE, ...) {	
   
   if(is.null(id)){id <- 1:length(Y)}
+  if (is.vector(W)){
+  	W <- as.matrix(W)
+  	colnames(W) <- "W1"
+  }
+  if (is.null(colnames(W)){
+  	colnames(W) <- paste0("W", 1:ncol(W))
+  }
   
   if(is.vector(W.stage2)){
     W.stage2 <- as.matrix(W.stage2)
