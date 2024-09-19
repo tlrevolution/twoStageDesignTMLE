@@ -30,7 +30,7 @@ setV <- function(n.effective){
 #' @export
 #' @return invisible character string giving the path to the file found.
 twoStageDesignTMLENews <- function(...){
-  utils::RShowDoc("NEWS", package="twoStageTMLE",...)
+  utils::RShowDoc("NEWS", package="twoStageDesignTMLE",...)
 }
 
 
