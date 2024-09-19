@@ -6,7 +6,5 @@ bibentry(key = "twoStageDesignTMLEpkg",
   year = "2024",
   author    = "Susan Gruber and Mark van der Laan",
   url = "https://CRAN.R-project.org/package=twoStageDesignTMLE",
-  note = "Version 1.0" 
+  note = "Version 1.0.1" 
 )
-
-
