@@ -154,7 +154,11 @@ twoStageTMLEmsm <- function(Y, A, W, V, Delta.W, W.stage2,
     argList <- list(...)
     argList$Y <- Y[Delta.W==1]
     argList$A <- A[Delta.W==1] 
-    argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.Q[Delta.W==1,], W.stage2)
+    if (is.null(W.Q)){
+       argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.stage2)
+    else {
+       argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.Q[Delta.W==1,], W.stage2)
+    }
     argList$V = V[Delta.W==1, , drop = FALSE]
     argList$Delta <- Delta[Delta.W==1]
     argList$obsWeights <- obsWeights[Delta.W==1]
