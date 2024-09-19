@@ -146,7 +146,11 @@ twoStageTMLE <- function(Y, A, W, Delta.W, W.stage2, Z=NULL,
   argList <- list(...)
   argList$Y <- Y[Delta.W==1]
   argList$A <- A[Delta.W==1] 
-  argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.Q[Delta.W==1,], W.stage2)
+  if (is.null(W.Q)){
+       argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.stage2)
+  else {
+       argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.Q[Delta.W==1,], W.stage2)
+  }
   argList$Z <- Z[Delta.W==1]
   argList$Delta <- Delta[Delta.W==1]
   argList$obsWeights <- obsWeights[Delta.W==1]
