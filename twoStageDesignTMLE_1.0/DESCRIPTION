@@ -1,6 +1,6 @@
 Package: twoStageDesignTMLE
 Title: Targeted Maximum Likelihood Estimation for Two-Stage Study Design
-Version: 1.0
+Version: 1.0.1
 Authors@R: c(person("Susan", "Gruber", role = c("aut", "cre"), 
 				email = "sgruber@TLrevolution.com"),
                     person("Mark", "van der Laan", role = "aut",
