@@ -105,7 +105,7 @@ twoStageTMLEmsm <- function(Y, A, W, V, Delta.W, W.stage2,
   	 colnames(W) <- "W1"
     }
   
-    if (is.null(colnames(W)){
+    if (is.null(colnames(W))){
   	colnames(W) <- paste0("W", 1:ncol(W))
     }
   
