@@ -46,9 +46,9 @@ controlled direct effect}
 
 \item{pi}{optional vector of missingness probabilities for \code{W.stage2}}
 
-\item{piform}{parametric regression formula for estimating \code{pi}}
+\item{piform}{parametric regression formula for estimating \code{pi} (see Details)}
 
-\item{pi.SL.library}{super learner library for estimating \code{pi}}
+\item{pi.SL.library}{super learner library for estimating \code{pi} (see Details)}
 
 \item{V.pi}{number of cross validation folds for estimating \code{pi}
 using super learner}
@@ -91,6 +91,15 @@ Inverse probability of censoring weighted TMLE for evaluating
 parameters when the full set of covariates is available on only
 a subset of observations.
 }
+\details{
+When using \code{piform} to specify a parametric model for pi that conditions
+on the outcome use \code{Delta.W} as the dependent variable and \code{Y.orig}
+on the right hand side of the formula instead of \code{Y}. When writing a
+user-defined SL wrapper for inclusion in \code{pi.SL.library} use \code{Y}
+on the left hand side of the formula. If specific covariate names are
+used on the right hand side use \code{Y.orig} to condition
+on the outcome.
+}
 \examples{
 n <- 1000
 W1 <- rnorm(n)
@@ -108,8 +117,8 @@ Delta.W[rows.sample] <- 1
 W3.stage2 <- cbind(W3 = W3[Delta.W==1])
 #1. specify parametric models and do not augment W (fast, but not recommended)
 result1 <- twoStageTMLE(Y=Y, A=A, W=cbind(W1, W2), Delta.W = Delta.W, 
-   W.stage2 = W3.stage2, piform = "Delta.W~ I(W1 > 0)", V.pi= 5,verbose = TRUE, 
-   Qform = "Y~A+W1",gform="A~W1 + W2 +W3", augmentW = FALSE)
+   W.stage2 = W3.stage2, piform = "Delta.W~ I(W1 > 0) + Y.orig", V.pi= 5,
+   verbose = TRUE, Qform = "Y~A+W1",gform="A~W1 + W2 +W3", augmentW = FALSE)
 summary(result1)
 \donttest{
 #2. specify a parametric model for conditional missingness probabilities (pi)
@@ -122,7 +131,7 @@ result2
 }
 \seealso{
 \itemize{
-\item \code{\link[=tmle]{tmle()}} for details on customizing the estimation procedure
+\item \code{\link[tmle:tmle]{tmle::tmle()}} for details on customizing the estimation procedure
 \item \code{\link[=twoStageTMLEmsm]{twoStageTMLEmsm()}} for estimating conditional effects
 \item S Rose and MJ van der Laan. A Targeted Maximum Likelihood Estimator for
 Two-Stage Designs. \emph{Int J Biostat.} 2011 Jan 1; 7(1): 17.

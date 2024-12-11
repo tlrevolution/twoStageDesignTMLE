@@ -14,16 +14,15 @@
 #			   rows for subjects not included in the subset)
 #' @param Delta binary indicator that outcome Y is observed
 #' @param	pi optional vector of sampling probabilities
-#' @param piform optional parametric regression model for estimating pi
-#' @param	pi.SL.library optional SL library specification for estimating pi 
-#'    (ignored when piform or pi is provided)
+#' @param piform parametric regression formula for estimating \code{pi} (see Details)
+#' @param pi.SL.library super learner library for estimating \code{pi} (see Details)
 #' @param V.pi optional number of cross-validation folds for super learning 
 #'    (ignored when piform or pi is provided)
 #' @param	pi.discreteSL flag to indicate whether to use ensemble or discrete 
 #'    super learning (ignored when piform or pi is provided)
-#' @param condSetNames variables to condition on when estimating pi. Default is 
-#'    covariates in \code{V} and \code{W}.Can optionally also condition 
-#'    on \code{A} and/or \code{Y}.
+#' @param condSetNames Variables to include as predictors of missingness
+#'  in \code{W.stage2}, any combination of \code{Y, A}, and either \code{W}  
+#'  (for all covariates in \code{W}), or individual covariate names in \code{W}
 #' @param id optional indicator of independent units of observation
 #' @param	Q.family outcome regression family, "gaussian" or "binomial"
 #' @param augmentW set to \code{TRUE} to augment \code{W} with predicted outcome 
@@ -33,7 +32,8 @@
 #' @param rareOutcome when \code{TRUE} sets \code{V.Q = 20, Q.discreteSL = TRUE}, 
 #'  \code{Q.SL.library} includes glm, glmnet, bart
 #' @param	verbose when \code{TRUE} prints informative messages 
-#' @param	...	other arugments passed to the \code{tmleMSM} function 
+#' @param	...	other arguments passed to the \code{tmleMSM} function 
+#' 
 #' @return 
 #' \describe{
 #' Object of class "twoStageTMLE"
@@ -45,6 +45,16 @@
 #'   \code{discreteSL} flag indicating whether discrete super learning was used}
 #'   \item{augW}{Matrix of predicted outcomes based on stage 1 covariates only}
 #' }
+#' 
+#' @details
+#' When using \code{piform} to specify a parametric model for pi that conditions 
+#' on the outcome use \code{Delta.W} as the dependent variable and \code{Y.orig}
+#' on the right hand side of the formula instead of \code{Y}. When writing a 
+#' user-defined SL wrapper for inclusion in \code{pi.SL.library} use \code{Y}
+#' on the left hand side of the formula. If specific covariate names are
+#' used on the right hand side use \code{Y.orig} to condition
+#' on the outcome. 
+#' 
 #' @examples
 #' n <- 1000
 #' set.seed(10)
@@ -100,15 +110,17 @@ twoStageTMLEmsm <- function(Y, A, W, V, Delta.W, W.stage2,
       verbose=FALSE, ...) {
     
     if(is.null(id)){id <- 1:length(Y)}
+    
     if (is.vector(W)){
-  	 W <- as.matrix(W)
-  	 colnames(W) <- "W1"
-    }
+  		W <- as.matrix(W)
+  		colnames(W) <- "W1"
+  	}
   
-    if (is.null(colnames(W))){
-  	colnames(W) <- paste0("W", 1:ncol(W))
-    }
+ 	 if (is.null(colnames(W))){
+  		colnames(W) <- paste0("W", 1:ncol(W))
+  	}
   
+    
     if(is.vector(W.stage2)){
       W.stage2 <- as.matrix(W.stage2)
       colnames(W.stage2) <- "W.stage2"
@@ -122,51 +134,59 @@ twoStageTMLEmsm <- function(Y, A, W, V, Delta.W, W.stage2,
     
     V <- as.matrix(V)
     
-    # Evaluate conditional sampling probabilities 
-    if (is.null(pi)){		
-      validCondSetNames <- c("A", "V", "W","Y")
-      if (!(all(condSetNames %in% validCondSetNames))) {
-        stop("condSetNames must be any combination of 'A', 'V', 'W', 'Y'")
-      }		
-      if (any(condSetNames == "Y")){
-        if (any(is.na(Y))){
-          stop("Cannot condition on the outcome to evaluate sampling probabilities when some outcome values are missing")
-        }
-      }
-      
-      if(is.null(W.Q)){
-        d.pi <- data.frame(Delta.W = Delta.W, mget(condSetNames))
-      } else {
-        d.pi <- data.frame(Delta.W = Delta.W, mget(condSetNames), W.Q)
-      }
-      colnames(d.pi)[-1] <- .getColNames(condSetNames, 
-                                 c(colnames(W), colnames(W.Q)), colnames(V))		
-      res <- tmle::estimateG(d = d.pi, g1W=NULL, gform = piform,
-            SL.library = pi.SL.library, id=id, V=V.pi,
-            message = "sampling weights", outcome = "A", 
-            discreteSL = pi.discreteSL, obsWeights = rep(1, nrow(W)),
-            verbose=verbose)
-      names(res)[1] <- "pi"		
-    } else {
-      res <- list()
-      res$pi <- pi
-      res$type <- "User supplied values"
-      res$coef <- NA
-      res$discreteSL <- NULL
-    }
-    
+    # # Evaluate conditional sampling probabilities 
+    res.twoStage <- estimatePi(Y=Y, A=A, W=W, condSetNames=condSetNames, W.Q=W.Q, 
+                               Delta.W = Delta.W, piform = piform, id = id,
+                               pi.SL.library = pi.SL.library,  V = V.pi, 
+                               discreteSL = pi.discreteSL, 
+                               verbose=verbose, pi = pi)
+    # if (is.null(pi)){		
+    #   validCondSetNames <- c("A", "V", "W","Y")
+    #   if (!(all(condSetNames %in% validCondSetNames))) {
+    #     stop("condSetNames must be any combination of 'A', 'V', 'W', 'Y'")
+    #   }		
+    #   if (any(condSetNames == "Y")){
+    #     if (any(is.na(Y))){
+    #       stop("Cannot condition on the outcome to evaluate sampling probabilities when some outcome values are missing")
+    #     }
+    #   }
+    #   
+    #   if(is.null(W.Q)){
+    #     d.pi <- data.frame(Delta.W = Delta.W, mget(condSetNames))
+    #     colnames(d.pi)[-1] <- .getColNames(condSetNames, 
+    #                              c(colnames(W)), colnames(V))	
+    #   } else {
+    #     d.pi <- data.frame(Delta.W = Delta.W, mget(condSetNames), W.Q)
+    #     colnames(d.pi)[-1] <- .getColNames(condSetNames, 
+    #                              c(colnames(W), colnames(W.Q)), colnames(V))	
+    #   }
+    # 
+    #   res.twoStage <- tmle::estimateG(d = d.pi, g1W=NULL, gform = piform,
+    #         SL.library = pi.SL.library, id=id, V=V.pi,
+    #         message = "sampling weights", outcome = "A", 
+    #         discreteSL = pi.discreteSL, obsWeights = rep(1, nrow(W)),
+    #         verbose=verbose)
+    #   names(res.twoStage)[1] <- "pi"		
+    # } else {
+    #   res.twoStage <- list()
+    #   res.twoStage$pi <- pi
+    #   res.twoStage$type <- "User supplied values"
+    #   res.twoStage$coef <- NA
+    #   res.twoStage$discreteSL <- NULL
+    # }
+    # 
     ub <- sqrt(sum(Delta.W)) * log(sum(Delta.W)) / 5
-    obsWeights <- .bound(Delta.W/res$pi, c(0, ub))
+    obsWeights <- .bound(Delta.W/res.twoStage$pi, c(0, ub))
     
     # Now set call to tmle on full data
     argList <- list(...)
     argList$Y <- Y[Delta.W==1]
     argList$A <- A[Delta.W==1] 
-    if (is.null(W.Q)){
-       argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.stage2)
-    else {
-       argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.Q[Delta.W==1,], W.stage2)
-    }
+	if (is.null(W.Q)){
+	  	  argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.stage2)
+	  } else {
+	  	 argList$W <- cbind(W[Delta.W==1,, drop=FALSE], W.Q[Delta.W==1,], W.stage2)
+	  }
     argList$V = V[Delta.W==1, , drop = FALSE]
     argList$Delta <- Delta[Delta.W==1]
     argList$obsWeights <- obsWeights[Delta.W==1]
@@ -186,7 +206,7 @@ twoStageTMLEmsm <- function(Y, A, W, V, Delta.W, W.stage2,
       warning("Error calling tmleMSM. Estimated sampling probabilites are being returned")
       result$tmle <- NULL
     }
-    result$twoStage <- res
+    result$twoStage <- res.twoStage
     result$augW <- W.Q
     class(result) <- "twoStageTMLE"  # for tmleMSM can use same class
     return(result)					

@@ -38,8 +38,8 @@ twoStageDesignTMLENews <- function(...){
 #'  get all the column names for variables
 #'  to condition on when evaluating Stage 1
 #'  missingness probabilities
-#'  valid entries are Y, A, (both vectors)
-#'  where W is a matrix
+#'  valid entries are "Y", "A", vector of column names in W, or just "W", 
+#'  which expands to all columns in the covariate matrix. 
 #' @param condSetNames which sets of variables to include in outcome regression model
 #' @param Wnames names of columns in baseline covariates \code{W}
 #' @param Vnames names of columns in MSM strata-definition \code{V}
@@ -50,7 +50,9 @@ twoStageDesignTMLENews <- function(...){
 .getColNames <- function(condSetNames, Wnames, Vnames = NULL){
   orig.colnames <- NULL
   for (i in 1:length(condSetNames)){
-    if (condSetNames[i] %in% c("A", "Y")) {
+    if (condSetNames[i] == "Y") {
+      orig.colnames <- c(orig.colnames, "Y.orig") 
+    } else if (condSetNames[i] %in% c("A", Wnames)){
       orig.colnames <- c(orig.colnames, condSetNames[i]) 
     } else if (condSetNames[i] == "W"){
       orig.colnames <- c(orig.colnames, Wnames)
@@ -58,7 +60,7 @@ twoStageDesignTMLENews <- function(...){
       orig.colnames <- c(orig.colnames, Vnames)
     }
   }
-  return(orig.colnames)
+  return(unique(orig.colnames))
 }
 
 #' .evalAugW

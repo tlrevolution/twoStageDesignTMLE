@@ -8,3 +8,5 @@ bibentry(key = "twoStageDesignTMLEpkg",
   url = "https://CRAN.R-project.org/package=twoStageDesignTMLE",
   note = "Version 1.0.1" 
 )
+
+

@@ -44,10 +44,9 @@ twoStageTMLEmsm(
 
 \item{pi}{optional vector of sampling probabilities}
 
-\item{piform}{optional parametric regression model for estimating pi}
+\item{piform}{parametric regression formula for estimating \code{pi} (see Details)}
 
-\item{pi.SL.library}{optional SL library specification for estimating pi
-(ignored when piform or pi is provided)}
+\item{pi.SL.library}{super learner library for estimating \code{pi} (see Details)}
 
 \item{V.pi}{optional number of cross-validation folds for super learning
 (ignored when piform or pi is provided)}
@@ -55,9 +54,9 @@ twoStageTMLEmsm(
 \item{pi.discreteSL}{flag to indicate whether to use ensemble or discrete
 super learning (ignored when piform or pi is provided)}
 
-\item{condSetNames}{variables to condition on when estimating pi. Default is
-covariates in \code{V} and \code{W}.Can optionally also condition
-on \code{A} and/or \code{Y}.}
+\item{condSetNames}{Variables to include as predictors of missingness
+in \code{W.stage2}, any combination of \code{Y, A}, and either \code{W}
+(for all covariates in \code{W}), or individual covariate names in \code{W}}
 
 \item{id}{optional indicator of independent units of observation}
 
@@ -74,7 +73,7 @@ regression model (ignored when \code{augmentW} is \code{FALSE})}
 
 \item{verbose}{when \code{TRUE} prints informative messages}
 
-\item{...}{other arugments passed to the \code{tmleMSM} function}
+\item{...}{other arguments passed to the \code{tmleMSM} function}
 }
 \value{
 \describe{
@@ -92,6 +91,15 @@ from glm fit, \code{type} of estimation procedure,
 Inverse probability of censoring weighted TMLE for evaluating MSM
 parameters when the full set of covariates is available on only
 a subset of observations, as in a 2-stage design.
+}
+\details{
+When using \code{piform} to specify a parametric model for pi that conditions
+on the outcome use \code{Delta.W} as the dependent variable and \code{Y.orig}
+on the right hand side of the formula instead of \code{Y}. When writing a
+user-defined SL wrapper for inclusion in \code{pi.SL.library} use \code{Y}
+on the left hand side of the formula. If specific covariate names are
+used on the right hand side use \code{Y.orig} to condition
+on the outcome.
 }
 \examples{
 n <- 1000
@@ -136,7 +144,7 @@ piform = "Delta.W~ I(W1 > 0)", MSM = "A*W1", gform="A~W1 + W2 +W3",
 }
 \seealso{
 \itemize{
-\item \code{\link[=tmleMSM]{tmleMSM()}} for details on customizing the estimation procedure
+\item \code{\link[tmle:tmleMSM]{tmle::tmleMSM()}} for details on customizing the estimation procedure
 \item \code{\link[=twoStageTMLE]{twoStageTMLE()}} for estimating marginal effects
 }
 }
