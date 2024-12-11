@@ -1,5 +1,0 @@
-v1.0.1.1 
- -- minor bug fix for when W.Q is null.  
- -- Clarified syntax for specifying parametric model for two-stage missingness mechanism. 
-
-
